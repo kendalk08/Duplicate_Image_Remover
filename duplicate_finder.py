@@ -5,14 +5,6 @@ from time import time
 from functools import wraps
 import json
 
-"""
-Please read the readme.txt before running this program.
-
-Nothing in this script needs to be changed to run correctly it will crawl through 
-directories for you. 
-"""
-
-
 total_file_count = 0
 
 class Dupes:
@@ -79,7 +71,7 @@ def getFiles():
                         new_check.append(filepath)
 
             if len(new_check) != 0:
-                folder_names.update({folder: {"checked": checked, "new": new_check}})
+                folder_names.update({direct: {"checked": checked, "new": new_check}})
 
                 cache = {folder: {"checked": checked, "new": new_check}}
                 if not os.path.exists(file):
@@ -97,6 +89,8 @@ def getFiles():
 @timing
 def duplicate_finder():
     files = getFiles()
+    with open("debug2.json", "w") as Debug:
+        json.dump(files, Debug, indent=4)
 
     if not files:
         return
@@ -109,10 +103,12 @@ def duplicate_finder():
             print(f"Hashing {stat}")
             stat_dict = {}
             if stat == "checked":
-                path = os.path.join(os.getcwd(), key, "_cache.json")
+                path = os.path.join(key, "_cache.json")
+                folder = os.path.split(key)
+
                 with open(path, "r") as JsonReader:
                     cache = json.load(JsonReader)
-                for c_index, cached_list in enumerate(cache[key]["checked"]):
+                for c_index, cached_list in enumerate(cache[folder[-1]]["checked"]):
                     stat_dict.update({c_index: cached_list[1]})
 
                 hash_dict.update({stat: stat_dict})
@@ -136,6 +132,7 @@ def checkFiles(hash_dict, folder, files):
     res_list = []
     all_files = {}
     index = 0
+    child = os.path.split(folder)
     files_del = False
 
     global total_file_count
@@ -169,7 +166,7 @@ def checkFiles(hash_dict, folder, files):
         ch_hashes = hash_dict["checked"].values()
         ch_zipped = zip(files[folder]["checked"], ch_hashes)
         joined = [*list(ch_zipped), *list(new_zipped)]
-        jsondata = {folder: {"checked": joined}}
+        jsondata = {child[-1]: {"checked": joined}}
         cur_dir = os.getcwd()
         path = os.path.join(cur_dir, folder, "_cache.json")
         with open(path, "w") as JsonWrite:
