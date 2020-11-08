@@ -1,6 +1,6 @@
 Instructions:
 *** if files have been deleted outside of the program, delete _cache.json for proper file comparison
-1) Place duplicate_finder.py outside the images folder you want to check for duplicates on.
+1) Place duplicate_finder.py outside the images folder you want to check for duplicates in.
 2) Run duplicate_finder.
 
 Notes:
