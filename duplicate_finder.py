@@ -97,8 +97,6 @@ def getFiles():
 @timing
 def duplicate_finder():
     files = getFiles()
-    with open("debug2.json", "w") as Debug:
-        json.dump(files, Debug, indent=4)
 
     if not files:
         return
